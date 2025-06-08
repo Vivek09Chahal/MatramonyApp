@@ -9,11 +9,11 @@ import SwiftUI
 
 struct signInView: View {
     
-    @Bindable var loginvm = authViewModel()
+    @Bindable var authVM: authViewModel
+    @Bindable var profileVM: profileViewModel
     @State private var email: String = ""
     @State private var password: String = ""
     @State private var showSignUp: Bool = false
-    @AppStorage("isFirstLaunch") var isFirstLaunch: Bool = true
     
     var body: some View {
         NavigationStack {
@@ -24,17 +24,16 @@ struct signInView: View {
                 VStack(spacing: 16) {
                     Image(systemName: "heart.fill")
                         .font(.system(size: 60))
-                        .foregroundGradientMofidifier()
                     
                     Text("Matrimony")
                         .font(.largeTitle)
                         .fontWeight(.bold)
-                        .foregroundGradientMofidifier()
                     
                     Text("Find your perfect match")
                         .font(.subheadline)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(.primary)
                 }
+                .backgroundGradientMofidifier()
                 
                 Spacer()
                 
@@ -50,7 +49,6 @@ struct signInView: View {
                                 .autocapitalization(.none)
                         }
                         .padding()
-                        .background(.white.opacity(0.8))
                         .cornerRadius(15)
                         
                         HStack {
@@ -60,24 +58,36 @@ struct signInView: View {
                             SecureField("Password", text: $password)
                         }
                         .padding()
-                        .background(.white.opacity(0.8))
                         .cornerRadius(15)
+                    }
+                    
+                    // Error message
+                    if !authVM.errorMessage.isEmpty {
+                        Text(authVM.errorMessage)
+                            .foregroundColor(.red)
+                            .font(.caption)
                     }
                     
                     // Login Button
                     Button {
-                        loginvm.loging(email: email, password: password)
-                        // For demo purposes, navigate to main app
-                        isFirstLaunch = false
+                        authVM.loging(email: email, password: password)
                     } label: {
-                        Text("Sign In")
-                            .font(.headline)
-                            .foregroundColor(.white)
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .backgroundGradientMofidifier()
-                            .cornerRadius(15)
+                        HStack {
+                            if authVM.isLoading {
+                                ProgressView()
+                                    .scaleEffect(0.8)
+                                    .foregroundColor(.white)
+                            }
+                            Text(authVM.isLoading ? "Signing In..." : "Sign In")
+                                .font(.headline)
+                        }
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+//                        .backgroundGradientMofidifier()
+                        .cornerRadius(15)
                     }
+                    .disabled(authVM.isLoading || email.isEmpty || password.isEmpty)
                     
                     // Sign Up Link
                     HStack {
@@ -94,14 +104,13 @@ struct signInView: View {
                 
                 Spacer()
             }
-            .backgroundGradientMofidifier()
         }
         .sheet(isPresented: $showSignUp) {
-            signUpView(profilevm: profileViewModel())
+            signUpView(authVM: authVM, profileVM: profileVM)
         }
     }
 }
 
 #Preview {
-    signInView()
+    signInView(authVM: authViewModel(), profileVM: profileViewModel())
 }

@@ -11,6 +11,7 @@ struct tabView: View {
     
     @State var selectedTab: Int = 0
     @Bindable var profileVM: profileViewModel
+    @Bindable var authVM: authViewModel
     
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -27,7 +28,7 @@ struct tabView: View {
             }
 
             Tab("Profile", systemImage: "person.crop.circle.fill", value: 3) {
-                profileView(profilevm: profileVM)
+                profileView(profilevm: profileVM, authVM: authVM)
             }
         }
     }

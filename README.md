@@ -93,14 +93,14 @@ Matramony/
 - [ ] Location-based matching
 - [ ] Push notifications for new likes/matches
 
-### Technical Improvements
+### Technical Improvements 
 - [ ] Backend integration (Firebase/custom API)
 - [ ] Real user authentication (not simulated)
 - [ ] Image storage and optimization
 - [ ] Offline data synchronization
 - [ ] Unit and UI testing
 
-### Additional Features
+### Additional Features 
 - [ ] Settings and account management
 - [ ] Privacy controls and blocking
 - [ ] Profile verification system

@@ -10,7 +10,8 @@ import PhotosUI
 
 struct signUpView: View {
     
-    @Bindable var profilevm: profileViewModel
+    @Bindable var authVM: authViewModel
+    @Bindable var profileVM: profileViewModel
     @Environment(\.dismiss) var dismiss
     @Environment(\.modelContext) private var modelContext
     
@@ -23,7 +24,10 @@ struct signUpView: View {
     @State private var religion: String = ""
     @State private var about: String = ""
     @State private var email: String = ""
+    @State private var password: String = ""
     @State private var phoneNumber: Int = 0
+    @State private var showingAlert = false
+    @State private var alertMessage = ""
     
     var body: some View {
         NavigationStack {
@@ -122,6 +126,12 @@ struct signUpView: View {
                             keyboardType: .emailAddress
                         )
                         
+                        CustomSecureField(
+                            icon: "lock.fill",
+                            placeholder: "Password (min 6 characters)",
+                            text: $password
+                        )
+                        
                         CustomTextField(
                             icon: "phone.fill",
                             placeholder: "Phone Number",
@@ -132,35 +142,40 @@ struct signUpView: View {
                             keyboardType: .numberPad
                         )
                         
+                        // Error message
+                        if !authVM.errorMessage.isEmpty {
+                            Text(authVM.errorMessage)
+                                .foregroundColor(.red)
+                                .font(.caption)
+                                .multilineTextAlignment(.center)
+                        }
+                        
                         // Create Profile Button
                         Button {
-                            profilevm.updateProfile(
-                                profileImage: profileImage,
-                                name: name,
-                                age: age,
-                                gender: gender,
-                                caste: caste,
-                                religion: religion,
-                                about: about,
-                                email: email,
-                                phoneNumber: phoneNumber
-                            )
-                            dismiss()
+                            createAccount()
                         } label: {
-                            Text("Create Profile")
-                                .font(.headline)
-                                .foregroundColor(.white)
-                                .frame(maxWidth: .infinity)
-                                .padding()
-                                .background(
-                                    LinearGradient(
-                                        colors: [.pink, .purple],
-                                        startPoint: .leading,
-                                        endPoint: .trailing
-                                    )
+                            HStack {
+                                if authVM.isLoading {
+                                    ProgressView()
+                                        .scaleEffect(0.8)
+                                        .foregroundColor(.white)
+                                }
+                                Text(authVM.isLoading ? "Creating Account..." : "Create Profile")
+                                    .font(.headline)
+                            }
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(
+                                LinearGradient(
+                                    colors: [.pink, .purple],
+                                    startPoint: .leading,
+                                    endPoint: .trailing
                                 )
-                                .cornerRadius(15)
+                            )
+                            .cornerRadius(15)
                         }
+                        .disabled(authVM.isLoading || !isFormValid)
                         .padding(.top, 10)
                     }
                 }
@@ -177,7 +192,8 @@ struct signUpView: View {
                 }
             }
             .onAppear {
-                profilevm.setModelContext(modelContext)
+                profileVM.setModelContext(modelContext)
+                authVM.setModelContext(modelContext)
             }
             .onChange(of: selectedItem) { _, newItem in
                 Task {
@@ -188,7 +204,41 @@ struct signUpView: View {
                     }
                 }
             }
+            .alert("Account Created", isPresented: $showingAlert) {
+                Button("OK") {
+                    dismiss()
+                }
+            } message: {
+                Text(alertMessage)
+            }
             .backgroundGradientMofidifier()
+        }
+    }
+    
+    // MARK: - Helper Properties and Functions
+    private var isFormValid: Bool {
+        !name.isEmpty && !email.isEmpty && !password.isEmpty && password.count >= 6
+    }
+    
+    private func createAccount() {
+        authVM.signUp(email: email, password: password) { success in
+            if success {
+                // Create the user profile
+                profileVM.updateProfile(
+                    profileImage: profileImage,
+                    name: name,
+                    age: age,
+                    gender: gender,
+                    caste: caste,
+                    religion: religion,
+                    about: about,
+                    email: email,
+                    phoneNumber: phoneNumber
+                )
+                
+                alertMessage = "Your account has been created successfully! Welcome to Matrimony!"
+                showingAlert = true
+            }
         }
     }
 }
@@ -266,7 +316,27 @@ struct CustomTextField: View {
     }
 }
 
+// MARK: - Custom Secure Field
+struct CustomSecureField: View {
+    let icon: String
+    let placeholder: String
+    @Binding var text: String
+    
+    var body: some View {
+        HStack {
+            Image(systemName: icon)
+                .foregroundColor(.pink)
+                .frame(width: 20)
+            
+            SecureField(placeholder, text: $text)
+        }
+        .padding()
+        .background(.quinary)
+        .cornerRadius(12)
+    }
+}
+
 #Preview {
-    signUpView(profilevm: profileViewModel())
+    signUpView(authVM: authViewModel(), profileVM: profileViewModel())
         .modelContainer(for: User.self, inMemory: true)
 }

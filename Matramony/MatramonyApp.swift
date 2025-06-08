@@ -13,6 +13,7 @@ struct MatramonyApp: App {
     
     @AppStorage("isFirstLaunch") var isFirstLaunch: Bool = true
     @State var profileVM = profileViewModel()
+    @State var authVM = authViewModel()
     
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
@@ -38,15 +39,16 @@ struct MatramonyApp: App {
                 )
                 .ignoresSafeArea()
                 
-                if isFirstLaunch {
-                    signInView()
-                        .onAppear {
-                            // Mark as launched so this screen doesn't show again
-                            isFirstLaunch = false
-                        }
+                if !authVM.isLoggedIn {
+                    signInView(authVM: authVM, profileVM: profileVM)
                 } else {
-                    tabView(profileVM: profileVM)
+                    tabView(profileVM: profileVM, authVM: authVM)
                 }
+            }
+            .onAppear {
+                // Set the model context for both view models
+                profileVM.setModelContext(sharedModelContainer.mainContext)
+                authVM.setModelContext(sharedModelContainer.mainContext)
             }
         }
         .modelContainer(sharedModelContainer)

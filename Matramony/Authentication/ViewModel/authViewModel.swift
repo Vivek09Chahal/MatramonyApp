@@ -79,6 +79,54 @@ class authViewModel {
         }
     }
     
+    func signUp(email: String, password: String, completion: @escaping (Bool) -> Void) {
+        isLoading = true
+        errorMessage = ""
+        
+        // Check if user already exists
+        guard let modelContext = modelContext else {
+            errorMessage = "Database error"
+            isLoading = false
+            completion(false)
+            return
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            do {
+                let descriptor = FetchDescriptor<User>(
+                    predicate: #Predicate { user in
+                        user.email == email
+                    }
+                )
+                let existingUsers = try modelContext.fetch(descriptor)
+                
+                if !existingUsers.isEmpty {
+                    self.errorMessage = "An account with this email already exists"
+                    self.isLoading = false
+                    completion(false)
+                    return
+                }
+                
+                if self.validateEmailFormat(email: email) && self.validatePassword(password: password) {
+                    // Account creation successful
+                    self.isLoggedIn = true
+                    self.email = email
+                    self.password = password
+                    self.isLoading = false
+                    completion(true)
+                } else {
+                    self.errorMessage = "Please check your email format and password requirements"
+                    self.isLoading = false
+                    completion(false)
+                }
+            } catch {
+                self.errorMessage = "Failed to check existing accounts"
+                self.isLoading = false
+                completion(false)
+            }
+        }
+    }
+    
     private func validateEmailFormat(email: String) -> Bool {
         let emailRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
         let emailPredicate = NSPredicate(format:"SELF MATCHES %@", emailRegex)

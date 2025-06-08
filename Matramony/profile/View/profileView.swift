@@ -12,7 +12,9 @@ import SwiftData
 struct profileView: View {
     
     @Bindable var profilevm: profileViewModel
+    @Bindable var authVM: authViewModel
     @State private var showEditProfileView: Bool = false
+    @State private var showLogoutAlert: Bool = false
     @Query private var items: [User]
     @Environment(\.modelContext) private var modelContext
     
@@ -62,6 +64,15 @@ struct profileView: View {
                         profileEditView(profilevm: profilevm)
                     }
                     .toolbar {
+                        ToolbarItem(placement: .navigationBarLeading) {
+                            Button {
+                                showLogoutAlert = true
+                            } label: {
+                                Image(systemName: "power")
+                                    .foregroundStyle(.pink)
+                            }
+                        }
+                        
                         ToolbarItem(placement: .navigationBarTrailing) {
                             Button {
                                 showEditProfileView.toggle()
@@ -74,7 +85,16 @@ struct profileView: View {
                     }
                     .onAppear {
                         profilevm.setModelContext(modelContext)
+                        authVM.setModelContext(modelContext)
                         profilevm.currentUser = item
+                    }
+                    .alert("Sign Out", isPresented: $showLogoutAlert) {
+                        Button("Cancel", role: .cancel) { }
+                        Button("Sign Out", role: .destructive) {
+                            authVM.logOut()
+                        }
+                    } message: {
+                        Text("Are you sure you want to sign out?")
                     }
                 } else {
                     // No profile exists, show create profile view
@@ -133,8 +153,27 @@ struct profileView: View {
                     .sheet(isPresented: $showEditProfileView) {
                         profileEditView(profilevm: profilevm)
                     }
+                    .toolbar {
+                        ToolbarItem(placement: .navigationBarLeading) {
+                            Button {
+                                showLogoutAlert = true
+                            } label: {
+                                Image(systemName: "power")
+                                    .foregroundStyle(.pink)
+                            }
+                        }
+                    }
                     .onAppear {
                         profilevm.setModelContext(modelContext)
+                        authVM.setModelContext(modelContext)
+                    }
+                    .alert("Sign Out", isPresented: $showLogoutAlert) {
+                        Button("Cancel", role: .cancel) { }
+                        Button("Sign Out", role: .destructive) {
+                            authVM.logOut()
+                        }
+                    } message: {
+                        Text("Are you sure you want to sign out?")
                     }
                 }
             }
@@ -221,6 +260,6 @@ extension profileView{
 
 #Preview {
     NavigationStack{
-        profileView(profilevm: .init())
+        profileView(profilevm: .init(), authVM: .init())
     }
 }
