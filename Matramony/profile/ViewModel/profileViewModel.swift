@@ -40,7 +40,8 @@ class profileViewModel{
         religion: String,
         about: String,
         email: String,
-        phoneNumber: Int
+        phoneNumber: Int,
+        password: String = ""
     ) {
         guard let modelContext = modelContext else { return }
         
@@ -53,7 +54,8 @@ class profileViewModel{
             religion: religion,
             about: about,
             email: email,
-            phoneNumber: phoneNumber
+            phoneNumber: phoneNumber,
+            password: password
         )
         
         modelContext.insert(newUser)
@@ -102,7 +104,8 @@ class profileViewModel{
                 religion: religion,
                 about: about,
                 email: email,
-                phoneNumber: phoneNumber
+                phoneNumber: phoneNumber,
+                password: "" // Empty password since this is for profile updates
             )
             return
         }

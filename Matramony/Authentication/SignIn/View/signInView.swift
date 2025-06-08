@@ -84,7 +84,6 @@ struct signInView: View {
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
                         .padding()
-//                        .backgroundGradientMofidifier()
                         .cornerRadius(15)
                     }
                     .disabled(authVM.isLoading || email.isEmpty || password.isEmpty)

@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftData
+import CryptoKit
 
 @Observable
 class authViewModel {
@@ -41,8 +42,25 @@ class authViewModel {
     }
     
     private func validateLogin(email: String, password: String) -> Bool {
-        // Basic validation
-        return !email.isEmpty && !password.isEmpty && email.contains("@")
+        guard let modelContext = modelContext else { return false }
+        
+        do {
+            let descriptor = FetchDescriptor<User>(
+                predicate: #Predicate { user in
+                    user.email == email
+                }
+            )
+            let users = try modelContext.fetch(descriptor)
+            
+            if let user = users.first {
+                // Verify password
+                return verifyPassword(password, hashedPassword: user.password)
+            }
+            return false
+        } catch {
+            print("Failed to validate login: \(error)")
+            return false
+        }
     }
     
     private func loadUserProfile(email: String) {
@@ -58,24 +76,6 @@ class authViewModel {
             currentUser = users.first
         } catch {
             print("Failed to load user profile: \(error)")
-        }
-    }
-    
-    func createUser(email: String, password: String) {
-        isLoading = true
-        errorMessage = ""
-        
-        // Simulate account creation
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-            if self.validateEmailFormat(email: email) && self.validatePassword(password: password) {
-                // In a real app, you would send this to your backend
-                self.isLoggedIn = true
-                self.email = email
-                self.password = password
-            } else {
-                self.errorMessage = "Please check your email format and password requirements"
-            }
-            self.isLoading = false
         }
     }
     
@@ -108,12 +108,35 @@ class authViewModel {
                 }
                 
                 if self.validateEmailFormat(email: email) && self.validatePassword(password: password) {
-                    // Account creation successful
-                    self.isLoggedIn = true
-                    self.email = email
-                    self.password = password
-                    self.isLoading = false
-                    completion(true)
+                    // Create user with hashed password
+                    let hashedPassword = self.hashPassword(password)
+                    let newUser = User(
+                        profileImage: nil,
+                        name: "",
+                        age: 0,
+                        gender: .male,
+                        caste: "",
+                        religion: "",
+                        about: "",
+                        email: email,
+                        phoneNumber: 0,
+                        password: hashedPassword
+                    )
+                    
+                    modelContext.insert(newUser)
+                    
+                    do {
+                        try modelContext.save()
+                        self.currentUser = newUser
+                        self.isLoggedIn = true
+                        self.email = email
+                        self.isLoading = false
+                        completion(true)
+                    } catch {
+                        self.errorMessage = "Failed to create account"
+                        self.isLoading = false
+                        completion(false)
+                    }
                 } else {
                     self.errorMessage = "Please check your email format and password requirements"
                     self.isLoading = false
@@ -159,5 +182,17 @@ class authViewModel {
             }
             self.isLoading = false
         }
+    }
+    
+    // MARK: - Password Security Methods
+    private func hashPassword(_ password: String) -> String {
+        let inputData = Data(password.utf8)
+        let hashedData = SHA256.hash(data: inputData)
+        return hashedData.compactMap { String(format: "%02x", $0) }.joined()
+    }
+    
+    private func verifyPassword(_ password: String, hashedPassword: String) -> Bool {
+        let hashedInputPassword = hashPassword(password)
+        return hashedInputPassword == hashedPassword
     }
 }
