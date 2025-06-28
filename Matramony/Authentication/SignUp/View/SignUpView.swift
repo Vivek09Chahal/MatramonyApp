@@ -8,10 +8,10 @@
 import SwiftUI
 import PhotosUI
 
-struct signUpView: View {
+struct SignUpView: View {
     
-    @Bindable var authVM: authViewModel
-    @Bindable var profileVM: profileViewModel
+    @Bindable var authVM: AuthViewModel
+    @Bindable var profileVM: ProfileViewModel
     @Environment(\.dismiss) var dismiss
     @Environment(\.modelContext) private var modelContext
     
@@ -244,7 +244,7 @@ struct signUpView: View {
 }
 
 // MARK: - Photo Picker Extension
-extension signUpView {
+extension SignUpView {
     
     var profileImagePicker: some View {
         VStack(spacing: 12) {
@@ -337,6 +337,6 @@ struct CustomSecureField: View {
 }
 
 #Preview {
-    signUpView(authVM: authViewModel(), profileVM: profileViewModel())
+    SignUpView(authVM: AuthViewModel(), profileVM: ProfileViewModel())
         .modelContainer(for: User.self, inMemory: true)
 }

@@ -9,10 +9,10 @@
 import SwiftUI
 import SwiftData
 
-struct profileView: View {
+struct ProfileView: View {
     
-    @Bindable var profilevm: profileViewModel
-    @Bindable var authVM: authViewModel
+    @Bindable var profilevm: ProfileViewModel
+    @Bindable var authVM: AuthViewModel
     @State private var showEditProfileView: Bool = false
     @State private var showLogoutAlert: Bool = false
     @Query private var items: [User]
@@ -61,7 +61,7 @@ struct profileView: View {
                     .navigationTitle("Profile")
                     .navigationBarTitleDisplayMode(.inline)
                     .sheet(isPresented: $showEditProfileView) {
-                        profileEditView(profilevm: profilevm)
+                        ProfileEditView(profilevm: profilevm)
                     }
                     .toolbar {
                         ToolbarItem(placement: .navigationBarLeading) {
@@ -151,7 +151,7 @@ struct profileView: View {
                     .navigationTitle("Profile")
                     .navigationBarTitleDisplayMode(.inline)
                     .sheet(isPresented: $showEditProfileView) {
-                        profileEditView(profilevm: profilevm)
+                        ProfileEditView(profilevm: profilevm)
                     }
                     .toolbar {
                         ToolbarItem(placement: .navigationBarLeading) {
@@ -181,7 +181,7 @@ struct profileView: View {
     }
 }
 
-extension profileView{
+extension ProfileView{
     
     func profileInfo(item: User) -> some View {
         VStack(spacing: 16) {
@@ -260,6 +260,6 @@ extension profileView{
 
 #Preview {
     NavigationStack{
-        profileView(profilevm: .init(), authVM: .init())
+        ProfileView(profilevm: .init(), authVM: .init())
     }
 }

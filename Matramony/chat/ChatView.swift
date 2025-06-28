@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct chatView: View {
+struct ChatView: View {
     @State private var chatManager = ChatDataManager.shared
     
     var body: some View {
@@ -419,5 +419,5 @@ struct RoundedCorner: Shape {
 }
 
 #Preview {
-    chatView()
+    ChatView()
 }

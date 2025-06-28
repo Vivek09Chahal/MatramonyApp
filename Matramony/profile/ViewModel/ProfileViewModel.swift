@@ -10,7 +10,7 @@ import SwiftData
 import SwiftUI
 
 @Observable
-class profileViewModel{
+class ProfileViewModel{
     
     var currentUser: User?
     

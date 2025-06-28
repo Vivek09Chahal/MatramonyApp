@@ -7,28 +7,28 @@
 
 import SwiftUI
 
-struct tabView: View {
+struct MainView: View {
     
     @State var selectedTab: Int = 0
-    @Bindable var profileVM: profileViewModel
-    @Bindable var authVM: authViewModel
+    @Bindable var profileVM: ProfileViewModel
+    @Bindable var authVM: AuthViewModel
     
     var body: some View {
         TabView(selection: $selectedTab) {
             Tab("Discover", systemImage: "heart.fill", value: 0) {
-                discoverView()
+                DiscoverView()
             }
-
+            
             Tab("Likes", systemImage: "star.fill", value: 1) {
-                likesView()
+                LikesView()
             }
             
             Tab("Chat", systemImage: "message.fill", value: 2) {
-                chatView()
+                ChatView()
             }
-
+            
             Tab("Profile", systemImage: "person.crop.circle.fill", value: 3) {
-                profileView(profilevm: profileVM, authVM: authVM)
+                ProfileView(profilevm: profileVM, authVM: authVM)
             }
         }
     }

@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-struct foregroundGradient: ViewModifier {
+struct ForegroundGradient: ViewModifier {
     func body(content: Content) -> some View {
         content
             .background(
@@ -22,8 +22,8 @@ struct foregroundGradient: ViewModifier {
 }
 
 extension View {
-    public func foregroundGradientMofidifier() -> some View {
-        self.modifier(foregroundGradient())
+    public func foregroundGradientModifier() -> some View {
+        self.modifier(ForegroundGradient())
     }
 }
 
