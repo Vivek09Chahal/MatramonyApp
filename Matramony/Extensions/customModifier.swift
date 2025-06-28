@@ -22,7 +22,7 @@ struct ForegroundGradient: ViewModifier {
 }
 
 extension View {
-    public func foregroundGradientMofidifier() -> some View {
+    public func foregroundGradientModifier() -> some View {
         self.modifier(ForegroundGradient())
     }
 }
