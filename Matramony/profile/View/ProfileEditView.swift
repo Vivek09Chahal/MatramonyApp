@@ -9,9 +9,9 @@ import SwiftUI
 import SwiftData
 import PhotosUI
 
-struct profileEditView: View {
+struct ProfileEditView: View {
     
-    @Bindable var profilevm: profileViewModel
+    @Bindable var profilevm: ProfileViewModel
     @Environment(\.dismiss) var dismiss
     @Environment(\.modelContext) private var modelContext
     
@@ -26,7 +26,7 @@ struct profileEditView: View {
     @State private var email: String
     @State private var phoneNumber: Int
     
-    init(profilevm: profileViewModel){
+    init(profilevm: ProfileViewModel){
         self.profilevm = profilevm
         let user = profilevm.currentUser
         
@@ -212,7 +212,7 @@ struct profileEditView: View {
 }
 
 // MARK: - Photo Picker Extension
-extension profileEditView {
+extension ProfileEditView {
     
     var profileImagePicker: some View {
         VStack(spacing: 12) {
@@ -269,6 +269,6 @@ extension profileEditView {
 }
 
 #Preview {
-    profileEditView(profilevm: profileViewModel())
+    ProfileEditView(profilevm: ProfileViewModel())
         .modelContainer(for: User.self, inMemory: true)
 }

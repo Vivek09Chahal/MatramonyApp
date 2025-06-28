@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct likesView: View {
+struct LikesView: View {
     
     @State private var selectedTab = 0
     @State private var likeManager = LikeDataManager.shared
@@ -426,5 +426,5 @@ struct MatchCard: View {
 }
 
 #Preview {
-    likesView()
+    LikesView()
 }

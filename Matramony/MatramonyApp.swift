@@ -12,8 +12,8 @@ import SwiftData
 struct MatramonyApp: App {
     
     @AppStorage("isFirstLaunch") var isFirstLaunch: Bool = true
-    @State var profileVM = profileViewModel()
-    @State var authVM = authViewModel()
+    @State var profileVM = ProfileViewModel()
+    @State var authVM = AuthViewModel()
     
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
@@ -40,9 +40,9 @@ struct MatramonyApp: App {
                 .ignoresSafeArea()
                 
                 if !authVM.isLoggedIn {
-                    signInView(authVM: authVM, profileVM: profileVM)
+                    SignInView(authVM: authVM, profileVM: profileVM)
                 } else {
-                    tabView(profileVM: profileVM, authVM: authVM)
+                    MainView(profileVM: profileVM, authVM: authVM)
                 }
             }
             .onAppear {

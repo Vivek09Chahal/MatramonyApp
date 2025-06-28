@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct discoverView: View {
+struct DiscoverView: View {
     
     @State private var currentCardIndex = 0
     @State private var cardOffset = CGSize.zero
@@ -277,5 +277,5 @@ struct ProfileCard: View {
 }
 
 #Preview {
-    discoverView()
+    DiscoverView()
 }

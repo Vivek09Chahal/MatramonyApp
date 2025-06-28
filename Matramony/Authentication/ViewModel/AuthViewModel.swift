@@ -10,7 +10,7 @@ import SwiftData
 import CryptoKit
 
 @Observable
-class authViewModel {
+class AuthViewModel {
     
     var currentUser: User?
     var email = ""

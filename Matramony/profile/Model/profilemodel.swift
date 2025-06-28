@@ -23,7 +23,16 @@ final class User {
     var phoneNumber: Int
     var password: String // Store hashed password
     
-    init(profileImage: Data?, name: String = "", age: Int = 0, gender: Gender = .male, caste: String = "", religion: String = "", about: String = "", email: String = "", phoneNumber: Int = 0, password: String = "") {
+    init(profileImage: Data?,
+         name: String = "",
+         age: Int = 0,
+         gender: Gender = .male,
+         caste: String = "",
+         religion: String = "",
+         about: String = "",
+         email: String = "",
+         phoneNumber: Int = 0,
+         password: String = "") {
         self.profileImage = profileImage
         self.name = name
         self.age = age

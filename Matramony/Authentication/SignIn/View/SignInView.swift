@@ -7,10 +7,10 @@
 
 import SwiftUI
 
-struct signInView: View {
+struct SignInView: View {
     
-    @Bindable var authVM: authViewModel
-    @Bindable var profileVM: profileViewModel
+    @Bindable var authVM: AuthViewModel
+    @Bindable var profileVM: ProfileViewModel
     @State private var email: String = ""
     @State private var password: String = ""
     @State private var showSignUp: Bool = false
@@ -105,11 +105,11 @@ struct signInView: View {
             }
         }
         .sheet(isPresented: $showSignUp) {
-            signUpView(authVM: authVM, profileVM: profileVM)
+            SignUpView(authVM: authVM, profileVM: profileVM)
         }
     }
 }
 
 #Preview {
-    signInView(authVM: authViewModel(), profileVM: profileViewModel())
+    SignInView(authVM: AuthViewModel(), profileVM: ProfileViewModel())
 }
